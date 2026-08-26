@@ -578,6 +578,22 @@ const links = [
     url: "https://docs.google.com/spreadsheets/d/1uKdYkme2gjPbSOGZBm8lMOiGT7y_4tW1KZthYwxcSOw/edit?gid=1072889558#gid=1072889558",
     sensitive: true,
     description: "Register rawat inap untuk pemantauan casemix."
+  },
+  {
+    label: "Dokumen PAP 1",
+    category: "RSUD",
+    section: "Akreditasi",
+    url: "https://drive.google.com/drive/folders/1VFOqId31Ph-MfkOFK-qCLJlAVXEHufLd?usp=sharing",
+    sensitive: true,
+    description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
+  },
+  {
+    label: "Dokumen PAP 2",
+    category: "RSUD",
+    section: "Akreditasi",
+    url: "https://drive.google.com/drive/folders/1O-FExBMtjsEzu1csi1rE2EipDDWpC5wl",
+    sensitive: true,
+    description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
   }
 ];
 
