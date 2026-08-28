@@ -580,7 +580,7 @@ const links = [
     description: "Register rawat inap untuk pemantauan casemix."
   },
   {
-    label: "Dokumen PAP 1",
+    label: "Akreditasi 2027",
     category: "RSUD",
     section: "Akreditasi",
     url: "https://drive.google.com/drive/folders/1VFOqId31Ph-MfkOFK-qCLJlAVXEHufLd?usp=sharing",
@@ -588,10 +588,26 @@ const links = [
     description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
   },
   {
-    label: "Dokumen PAP 2",
+    label: "Akreditasi 2027 Pusat",
     category: "RSUD",
     section: "Akreditasi",
     url: "https://drive.google.com/drive/folders/1O-FExBMtjsEzu1csi1rE2EipDDWpC5wl",
+    sensitive: true,
+    description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
+  },
+  {
+    label: "Akreditasi 2023",
+    category: "RSUD",
+    section: "Akreditasi",
+    url: "https://drive.google.com/drive/folders/1Sjq9XWMS-Em6dFziSTrQqGBXRfwr3Vu0?usp=sharing",
+    sensitive: true,
+    description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
+  },
+  {
+    label: "Regulasi RSUD",
+    category: "RSUD",
+    section: "Akreditasi",
+    url: "https://drive.google.com/drive/folders/1poTfAlAwz-XUPvyXCH-JEHtlJPHhpIWv",
     sensitive: true,
     description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
   }
