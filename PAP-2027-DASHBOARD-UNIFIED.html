@@ -42,56 +42,76 @@
       margin: 0;
       padding: 0;
       font-family: var(--font-sans);
-      background-color: var(--color-bg);
+      background-color: var(--paper);
       color: var(--color-text-primary);
       line-height: 1.6;
     }
     
     /* ===== HEADER ===== */
     header {
-      background: linear-gradient(135deg, #0a6e4f 0%, #199e70 100%);
-      color: white;
-      padding: 32px;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 38px 32px 22px;
+      border-bottom: 2px solid var(--ink);
     }
     
     .header-content {
       max-width: 1400px;
       margin: 0 auto;
     }
-    
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      font-family: var(--font-serif);
-    }
-    
-    .header-meta {
+
+    .masthead-row {
       display: flex;
-      gap: 24px;
-      font-size: 14px;
-      opacity: 0.95;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
       flex-wrap: wrap;
     }
+
+    .org {
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
     
-    .header-stat {
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      font-family: var(--font-serif);
+      color: var(--ink);
+    }
+
+    .updated {
+      font-size: 13px;
+      color: var(--ink-soft);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .updated strong { color: var(--ink); font-weight: 600; }
+
+    /* ===== Hero angka 52 (tab Real-time) ===== */
+    .readiness-top {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
     }
-    
-    .header-stat-label {
-      opacity: 0.8;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .readiness-num {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 64px;
+      line-height: 1;
+      color: var(--ink);
     }
-    
-    .header-stat-value {
-      font-size: 18px;
-      font-weight: 600;
+    .readiness-label {
+      font-size: 16px;
+      color: var(--ink-soft);
+      max-width: 380px;
     }
     
     /* ===== NAVIGATION ===== */
@@ -640,24 +660,12 @@
 
 <header>
   <div class="header-content">
-    <h1>Dashboard Akreditasi PAP 2027</h1>
-    <div class="header-meta">
-      <div class="header-stat">
-        <div class="header-stat-label">Total Elemen</div>
-        <div class="header-stat-value">52 EP</div>
+    <div class="masthead-row">
+      <div>
+        <div class="org">RSUD Saras Adyatma &nbsp;&middot;&nbsp; Kabupaten Bantul</div>
+        <h1>Papan status persiapan akreditasi PAP</h1>
       </div>
-      <div class="header-stat">
-        <div class="header-stat-label">Standar</div>
-        <div class="header-stat-value">14 Area</div>
-      </div>
-      <div class="header-stat">
-        <div class="header-stat-label">Target Survei</div>
-        <div class="header-stat-value">September 2027</div>
-      </div>
-      <div class="header-stat">
-        <div class="header-stat-label">Estimasi Progress</div>
-        <div class="header-stat-value" id="estimateProgress">—</div>
-      </div>
+      <div class="updated">Diperbarui <strong id="todayDate">&mdash;</strong><br>52 elemen penilaian &middot; 14 standar</div>
     </div>
   </div>
 </header>
@@ -1004,6 +1012,10 @@
     </div>
 
     <div class="section">
+      <div class="readiness-top">
+        <div class="readiness-num">52</div>
+        <div class="readiness-label">elemen penilaian dilacak di seluruh standar PAP, dari regulasi payung sampai formulir teknis.</div>
+      </div>
       <div class="readiness-bar">
         <div class="segbar-item seg-verified" id="seg-verified" style="width:0%"></div>
         <div class="segbar-item seg-update" id="seg-update" style="width:0%"></div>
@@ -1519,7 +1531,8 @@ function renderAll(DATA) {
   const scored = counts.verified * 10 + counts.draft * 5;
   const denom = (counts.verified + counts.draft + counts.none) * 10;
   const estimate = denom > 0 ? Math.round(scored / denom * 100) : 0;
-  document.getElementById("estimateProgress").textContent = estimate + "%";
+  const estEl = document.getElementById("estimateProgress");
+  if (estEl) estEl.textContent = estimate + "%";
 }
 
 // ===== INIT =====
@@ -1532,7 +1545,10 @@ document.addEventListener('DOMContentLoaded', function() {
     hour: '2-digit',
     minute: '2-digit'
   });
-  document.getElementById('update-time').textContent = dateStr;
+  const upd = document.getElementById('update-time');
+  if (upd) upd.textContent = dateStr;
+  const today = document.getElementById('todayDate');
+  if (today) today.textContent = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
   
   // Create modal
   createEditDataModal();
