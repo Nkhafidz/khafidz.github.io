@@ -1177,88 +1177,134 @@ function csvToData(text) {
   return grouped;
 }
 
-// ===== FETCH & RENDER =====
-async function fetchLiveData(methodIndex = 0) {
+// ===== FETCH via gviz JSONP (menembus CORS tanpa proxy) =====
+const SHEET_NAME = "52 EP PAP Dashboard";
+const GVIZ_BASE = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizResponse&sheet=${encodeURIComponent(SHEET_NAME)}`;
+let _gvizTimeout = null;
+
+function fetchLiveData() {
   const dot = document.getElementById("syncDot");
   const status = document.getElementById("syncStatus");
   const btn = document.getElementById("refreshBtn");
-  
-  if (methodIndex === 0) {
-    btn.disabled = true;
-    status.textContent = "Memuat data dari Google Sheets…";
-    dot.className = "sync-dot";
-  }
-  
+  if (btn) btn.disabled = true;
+  status.textContent = "Memuat data dari Google Sheets…";
+  dot.className = "sync-dot";
+
+  const old = document.getElementById("gvizScript");
+  if (old) old.remove();
+
+  if (_gvizTimeout) clearTimeout(_gvizTimeout);
+  _gvizTimeout = setTimeout(() => handleGvizFailure("Timeout — Sheets tidak merespons"), 12000);
+
+  const script = document.createElement("script");
+  script.id = "gvizScript";
+  script.src = GVIZ_BASE + "&_=" + Date.now();
+  script.onerror = () => handleGvizFailure("Gagal memuat script dari Sheets");
+  document.body.appendChild(script);
+}
+
+// Google memanggil fungsi ini dengan data-nya
+function handleGvizResponse(resp) {
+  if (_gvizTimeout) { clearTimeout(_gvizTimeout); _gvizTimeout = null; }
+  const dot = document.getElementById("syncDot");
+  const status = document.getElementById("syncStatus");
+  const btn = document.getElementById("refreshBtn");
+
   try {
-    const method = FETCH_METHODS[methodIndex];
-    if (!method) throw new Error("Semua method gagal");
-    
-    console.log(`Trying fetch method ${methodIndex + 1}: ${method.name}`);
-    
-    const res = await fetch(method.url, { 
-      cache: "no-store",
-      mode: 'no-cors',
-      signal: AbortSignal.timeout(8000)
+    if (!resp || resp.status === "error") {
+      const reason = resp && resp.errors && resp.errors[0] ? resp.errors[0].detailed_message : "Sheets menolak permintaan";
+      throw new Error(reason);
+    }
+    const table = resp.table;
+    let cols = table.cols.map(c => (c.label || "").trim());
+
+    let iStd = cols.indexOf("Standar");
+    let iEp  = cols.indexOf("EP");
+    let iDoc = cols.indexOf("Dokumen/Bukti");
+    let iStat= cols.indexOf("Status");
+    let iNote= cols.indexOf("Catatan");
+
+    let rows = table.rows;
+
+    // Fallback: jika header tidak terbaca sebagai label, pakai baris pertama sebagai header
+    if (iStd < 0 || iEp < 0 || iStat < 0) {
+      if (rows.length) {
+        const hdr = rows[0].c.map(c => (c && c.v != null ? String(c.v).trim() : ""));
+        iStd = hdr.indexOf("Standar"); iEp = hdr.indexOf("EP");
+        iDoc = hdr.indexOf("Dokumen/Bukti"); iStat = hdr.indexOf("Status");
+        iNote = hdr.indexOf("Catatan");
+        rows = rows.slice(1);
+      }
+    }
+    if (iStd < 0 || iEp < 0 || iStat < 0) throw new Error("Kolom tidak dikenali (butuh: Standar, EP, Status)");
+
+    const grouped = [];
+    const byStandar = {};
+    rows.forEach(r => {
+      const cell = i => (i >= 0 && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
+      const standar = cell(iStd);
+      if (!standar) return;
+      const statusKey = LABEL_TO_KEY[cell(iStat)] || "none";
+      const entry = [cell(iEp), cell(iDoc), statusKey, cell(iNote)];
+      if (!byStandar[standar]) { byStandar[standar] = []; grouped.push([standar, byStandar[standar]]); }
+      byStandar[standar].push(entry);
     });
-    
-    if (!res.ok && res.status !== 0) throw new Error(`HTTP ${res.status}`);
-    
-    const text = await res.text();
-    if (!text || text.length < 20) throw new Error("Data terlalu pendek");
-    
-    const data = csvToData(text);
-    if (!data.length) throw new Error("Sheet kosong");
-    
-    renderAll(data);
-    localStorage.setItem("PAP_CACHED_DATA", JSON.stringify(data));
-    
+
+    if (!grouped.length) throw new Error("Sheet kosong");
+
+    renderAll(grouped);
+    localStorage.setItem("PAP_CACHED_DATA", JSON.stringify(grouped));
+
     dot.className = "sync-dot live";
     dataMode = "auto";
     const now = new Date().toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
-    status.innerHTML = `✅ <strong>Live dari Google Sheets</strong> · ${now} <button id="editDataBtn2" class="refresh-btn" style="margin-left: auto;">Edit Data Manual</button>`;
-    
-    if (!autoRefreshInterval) {
-      autoRefreshInterval = setInterval(() => fetchLiveData(0), 30000);
-    }
+    status.innerHTML = `✅ <strong>Live dari Google Sheets</strong> · ${now} `;
+    appendEditButton(status);
+
+    if (!autoRefreshInterval) autoRefreshInterval = setInterval(fetchLiveData, 60000);
   } catch (err) {
-    console.error(`Method ${methodIndex} (${FETCH_METHODS[methodIndex]?.name}) error:`, err.message);
-    
-    if (methodIndex < FETCH_METHODS.length - 1) {
-      status.textContent = `Mencoba method alternatif (${methodIndex + 1}/${FETCH_METHODS.length})…`;
-      return fetchLiveData(methodIndex + 1);
-    }
-    
-    // Try load from cache
-    try {
-      const cached = localStorage.getItem("PAP_CACHED_DATA");
-      if (cached) {
-        const data = JSON.parse(cached);
-        renderAll(data);
-        dot.className = "sync-dot offline";
-        dataMode = "offline";
-        status.innerHTML = `📦 <strong>Data dari cache offline</strong> · Klik "Edit Data Manual" untuk update <button id="editDataBtn3" class="refresh-btn" style="margin-left: auto;">Edit Data Manual</button>`;
-        btn.disabled = false;
-        return;
-      }
-    } catch (e) {}
-    
-    // Use fallback
-    renderAll(FALLBACK_DATA);
-    dot.className = "sync-dot offline";
-    dataMode = "manual";
-    status.innerHTML = `⚠️ <strong>Data fallback</strong> · Klik "Edit Data Manual" untuk update dengan data Anda <button id="editDataBtn" class="refresh-btn" style="margin-left: auto;">Edit Data Manual</button>`;
+    handleGvizFailure(err.message);
   } finally {
-    if (methodIndex === 0 || methodIndex >= FETCH_METHODS.length - 1) {
-      btn.disabled = false;
-      
-      // Attach edit button handlers
-      setTimeout(() => {
-        document.querySelectorAll("#editDataBtn, #editDataBtn2, #editDataBtn3").forEach(el => {
-          el.onclick = openEditDataModal;
-        });
-      }, 100);
-    }
+    if (btn) btn.disabled = false;
+    const s = document.getElementById("gvizScript");
+    if (s) s.remove();
   }
+}
+
+function handleGvizFailure(msg) {
+  if (_gvizTimeout) { clearTimeout(_gvizTimeout); _gvizTimeout = null; }
+  const dot = document.getElementById("syncDot");
+  const status = document.getElementById("syncStatus");
+  const btn = document.getElementById("refreshBtn");
+  if (btn) btn.disabled = false;
+  console.error("Gviz error:", msg);
+
+  try {
+    const cached = localStorage.getItem("PAP_CACHED_DATA");
+    if (cached) {
+      renderAll(JSON.parse(cached));
+      dot.className = "sync-dot offline";
+      dataMode = "offline";
+      status.innerHTML = `📦 <strong>Data tersimpan (offline)</strong> · Sheets belum terjangkau `;
+      appendEditButton(status);
+      return;
+    }
+  } catch (e) {}
+
+  renderAll(FALLBACK_DATA);
+  dot.className = "sync-dot offline";
+  dataMode = "manual";
+  status.innerHTML = `⚠️ <strong>Belum tersambung ke Sheets</strong> `;
+  appendEditButton(status);
+}
+
+function appendEditButton(statusEl) {
+  const b = document.createElement("button");
+  b.className = "refresh-btn";
+  b.style.marginLeft = "8px";
+  b.textContent = "Edit Manual";
+  b.onclick = openEditDataModal;
+  statusEl.appendChild(b);
 }
 
 function openEditDataModal() {
@@ -1294,7 +1340,7 @@ function createEditDataModal() {
         <button class="btn" onclick="saveManualData()">Simpan Data</button>
       </div>
     </div>
-  </modal>
+  `;
   document.body.appendChild(modal);
 }
 
