@@ -1012,11 +1012,11 @@
         <div class="segbar-item seg-none" id="seg-none" style="width:0%"></div>
       </div>
       <div class="legend">
-        <div class="legend-item"><span class="swatch" style="background:var(--sage)"></span><strong id="cnt-verified">0</strong> Terverifikasi</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--steel)"></span><strong id="cnt-update">0</strong> Sudah Ada – Perlu Update</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--amber)"></span><strong id="cnt-draft">0</strong> Draft</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--plum)"></span><strong id="cnt-external">0</strong> Eksternal</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--rust)"></span><strong id="cnt-none">0</strong> Belum Ada</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--sage)"></span><strong id="cnt-verified">0</strong> Siap</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--amber)"></span><strong id="cnt-draft">0</strong> Dalam Proses</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--rust)"></span><strong id="cnt-none">0</strong> Belum Mulai</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--steel)"></span><strong id="cnt-update">0</strong> TDD</div>
+        <div class="legend-item" style="display:none"><span class="swatch" style="background:var(--plum)"></span><strong id="cnt-external">0</strong> -</div>
       </div>
     </div>
 
@@ -1047,12 +1047,14 @@
 
 <script>
 // ===== CONST & CONFIGS =====
+// Skema status sesuai Master_EP (dropdown asli). Slot warna lama dipakai ulang:
+//   verified(hijau)=Siap  draft(amber)=Dalam Proses  none(merah)=Belum Mulai  update(abu)=TDD
 const STATUS = {
-  verified: { label: "Terverifikasi", cls: "verified" },
-  update:   { label: "Sudah Ada - Perlu Update", cls: "update" },
-  draft:    { label: "Draft - Menunggu Pengesahan", cls: "draft" },
-  external: { label: "Menunggu Keputusan Eksternal", cls: "external" },
-  none:     { label: "Belum Ada", cls: "none" },
+  verified: { label: "Siap", cls: "verified" },              // skor 10
+  draft:    { label: "Dalam Proses", cls: "draft" },         // skor 5
+  none:     { label: "Belum Mulai", cls: "none" },           // skor 0
+  update:   { label: "TDD", cls: "update" },                 // tidak dapat diterapkan
+  external: { label: "-", cls: "external" },                 // tidak dipakai
 };
 
 const SHEET_ID = "1p2Voy5pcP6BcsOmGnwYF0_cMbzhVfm2XI1indRn-VlA";
@@ -1094,24 +1096,25 @@ if (!AbortSignal.timeout) {
 }
 
 const LABEL_TO_KEY = {
-  "Terverifikasi": "verified",
-  "Sudah Ada - Perlu Update": "update",
-  "Draft - Menunggu Pengesahan": "draft",
-  "Menunggu Keputusan Eksternal": "external",
-  "Belum Ada": "none",
+  "Siap": "verified",
+  "Dalam Proses": "draft",
+  "Belum Mulai": "none",
+  "TDD": "update",
+  "Implementasi": "verified",   // sinonim bila terisi
+  "Evaluasi": "draft",
 };
 
 const FALLBACK_DATA = [
   ["PAP 1", [
-    ["a","REG-01 - Peraturan Direktur PAP","update","SK 03/2022"],
-    ["b","Panduan Asuhan Seragam","update","Sudah ada"],
+    ["a","Regulasi pelayanan dan asuhan pasien (PAP) poin a–e","none",""],
+    ["b","Asuhan yang seragam untuk setiap pasien","none",""],
   ]],
   ["PAP 1.1", [
-    ["a","SOP-PAP-02 Integrasi CPPT","draft","Dalam revisi"],
-    ["b","SOP-INP-37 - Instruksi PPA","draft","Revisi 01"],
-    ["c","Indikasi klinis lab/imaging","draft","Dicakup SOP"],
-    ["d","Dokumentasi prosedur sesuai instruksi","none","TBD"],
-    ["e","Pengkajian tindakan invasif rawat jalan","draft","FRM-PAP-06R"],
+    ["a","Pelayanan & asuhan terintegrasi dan terkoordinasi","none",""],
+    ["b","Kewenangan pemberian instruksi oleh PPA","none",""],
+    ["c","Indikasi klinis pada permintaan lab/imajing","none",""],
+    ["d","Prosedur/tindakan sesuai instruksi terdokumentasi","none",""],
+    ["e","Pengkajian tindakan invasif/berisiko rawat jalan","none",""],
   ]],
 ];
 
@@ -1161,16 +1164,24 @@ function parseCSV(text) {
 function csvToData(text) {
   const rows = parseCSV(text);
   const [header, ...body] = rows;
-  const idx = { standar: header.indexOf("Standar"), ep: header.indexOf("EP"), doc: header.indexOf("Dokumen/Bukti"), status: header.indexOf("Status"), note: header.indexOf("Catatan") };
+  const find = (...names) => { for (const n of names){ const i = header.indexOf(n); if (i>=0) return i; } return -1; };
+  const idx = {
+    standar: find("Standar"),
+    ep: find("EP"),
+    doc: find("Elemen Penilaian","Elemen","Dokumen/Bukti"),
+    status: find("Status Implementasi","Status"),
+    note: find("Gap/Temuan","Catatan Verifikasi","Catatan"),
+  };
   if (idx.standar < 0 || idx.ep < 0 || idx.status < 0) throw new Error("Format kolom tidak dikenali");
-  
+
   const grouped = [];
   const byStandar = {};
   body.forEach(r => {
     if (!r[idx.standar]) return;
     const standar = r[idx.standar].trim();
+    if (!/^PAP/i.test(standar)) return; // lewati baris non-EP
     const statusKey = LABEL_TO_KEY[(r[idx.status] || "").trim()] || "none";
-    const entry = [r[idx.ep].trim(), (r[idx.doc]||"").trim(), statusKey, (r[idx.note]||"").trim()];
+    const entry = [(r[idx.ep]||"").trim(), (idx.doc>=0 ? (r[idx.doc]||"") : "").trim(), statusKey, (idx.note>=0 ? (r[idx.note]||"") : "").trim()];
     if (!byStandar[standar]) { byStandar[standar] = []; grouped.push([standar, byStandar[standar]]); }
     byStandar[standar].push(entry);
   });
@@ -1178,11 +1189,12 @@ function csvToData(text) {
 }
 
 // ===== FETCH via gviz JSONP (menembus CORS tanpa proxy) =====
-const SHEET_NAME = "52 EP PAP Dashboard";
+const SHEET_NAME = "Master_EP";
 const GVIZ_ROOT = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizResponse`;
-// Coba berurutan: nama tab -> tab pertama (gid=0) -> default
+// Coba berurutan: tab Master_EP -> nama alternatif -> tab pertama (gid=0) -> default
 const GVIZ_VARIANTS = [
   `&sheet=${encodeURIComponent(SHEET_NAME)}`,
+  `&sheet=${encodeURIComponent("MASTER CHECKLIST DAN SELF-ASSESSMENT PAP")}`,
   `&gid=0`,
   ``,
 ];
@@ -1243,13 +1255,14 @@ function handleGvizResponse(resp) {
       throw new Error(reason);
     }
     const table = resp.table;
+    const findIn = (arr, ...names) => { for (const n of names){ const i = arr.indexOf(n); if (i>=0) return i; } return -1; };
     let cols = table.cols.map(c => (c.label || "").trim());
 
-    let iStd = cols.indexOf("Standar");
-    let iEp  = cols.indexOf("EP");
-    let iDoc = cols.indexOf("Dokumen/Bukti");
-    let iStat= cols.indexOf("Status");
-    let iNote= cols.indexOf("Catatan");
+    let iStd = findIn(cols, "Standar");
+    let iEp  = findIn(cols, "EP");
+    let iDoc = findIn(cols, "Elemen Penilaian", "Elemen", "Dokumen/Bukti");
+    let iStat= findIn(cols, "Status Implementasi", "Status");
+    let iNote= findIn(cols, "Gap/Temuan", "Catatan Verifikasi", "Catatan");
 
     let rows = table.rows;
 
@@ -1257,20 +1270,21 @@ function handleGvizResponse(resp) {
     if (iStd < 0 || iEp < 0 || iStat < 0) {
       if (rows.length) {
         const hdr = rows[0].c.map(c => (c && c.v != null ? String(c.v).trim() : ""));
-        iStd = hdr.indexOf("Standar"); iEp = hdr.indexOf("EP");
-        iDoc = hdr.indexOf("Dokumen/Bukti"); iStat = hdr.indexOf("Status");
-        iNote = hdr.indexOf("Catatan");
+        iStd = findIn(hdr, "Standar"); iEp = findIn(hdr, "EP");
+        iDoc = findIn(hdr, "Elemen Penilaian", "Elemen", "Dokumen/Bukti");
+        iStat= findIn(hdr, "Status Implementasi", "Status");
+        iNote= findIn(hdr, "Gap/Temuan", "Catatan Verifikasi", "Catatan");
         rows = rows.slice(1);
       }
     }
-    if (iStd < 0 || iEp < 0 || iStat < 0) throw new Error("Kolom tidak dikenali (butuh: Standar, EP, Status)");
+    if (iStd < 0 || iEp < 0 || iStat < 0) throw new Error("Kolom tidak dikenali (butuh: Standar, EP, Status Implementasi)");
 
     const grouped = [];
     const byStandar = {};
     rows.forEach(r => {
       const cell = i => (i >= 0 && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
       const standar = cell(iStd);
-      if (!standar) return;
+      if (!standar || !/^PAP/i.test(standar)) return; // hanya baris EP PAP
       const statusKey = LABEL_TO_KEY[cell(iStat)] || "none";
       const entry = [cell(iEp), cell(iDoc), statusKey, cell(iNote)];
       if (!byStandar[standar]) { byStandar[standar] = []; grouped.push([standar, byStandar[standar]]); }
@@ -1354,13 +1368,13 @@ function createEditDataModal() {
       <p><strong>Cara:</strong></p>
       <ol style="font-size: 12px; color: var(--color-text-secondary);">
         <li>Buka Google Sheets: <a href="https://docs.google.com/spreadsheets/d/1p2Voy5pcP6BcsOmGnwYF0_cMbzhVfm2XI1indRn-VlA/edit?usp=sharing" target="_blank">klik di sini</a></li>
-        <li>Select semua data (Ctrl+A)</li>
-        <li>Copy (Ctrl+C)</li>
+        <li>Buka tab <strong>Master_EP</strong></li>
+        <li>Blok data termasuk baris judul kolom, lalu Copy (Ctrl+C)</li>
         <li>Paste di bawah ini (Ctrl+V)</li>
         <li>Klik "Simpan Data"</li>
       </ol>
-      <p style="font-size: 11px; color: var(--color-text-muted);">Data akan tersimpan offline & otomatis update dashboard</p>
-      <textarea id="csvInput" style="width:100%;height:200px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px;border:1px solid var(--color-border);margin:12px 0;" placeholder="Paste data CSV di sini (Standar, EP, Dokumen/Bukti, Status, Catatan)"></textarea>
+      <p style="font-size: 11px; color: var(--color-text-muted);">Kolom yang dibaca: Standar, EP, Elemen Penilaian, Status Implementasi, Gap/Temuan. Status: Siap / Dalam Proses / Belum Mulai / TDD. Data tersimpan offline & langsung memperbarui dashboard.</p>
+      <textarea id="csvInput" style="width:100%;height:200px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px;border:1px solid var(--color-border);margin:12px 0;" placeholder="Paste data dari tab Master_EP di sini (termasuk baris judul kolom)"></textarea>
       <div style="display: flex; gap: 10px;">
         <button class="btn secondary" onclick="closeEditDataModal()">Batal</button>
         <button class="btn" onclick="saveManualData()">Simpan Data</button>
@@ -1458,8 +1472,10 @@ function renderAll(DATA) {
     }
   });
 
-  // Update header estimate
-  const estimate = total > 0 ? Math.round((counts.verified + counts.update) / total * 100) : 0;
+  // Estimasi progres berbasis skor instrumen (Siap=10, Proses=5, Belum=0; TDD dikecualikan)
+  const scored = counts.verified * 10 + counts.draft * 5;
+  const denom = (counts.verified + counts.draft + counts.none) * 10;
+  const estimate = denom > 0 ? Math.round(scored / denom * 100) : 0;
   document.getElementById("estimateProgress").textContent = estimate + "%";
 }
 
