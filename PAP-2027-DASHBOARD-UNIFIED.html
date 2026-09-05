@@ -974,9 +974,32 @@ const STATUS = {
 };
 
 const SHEET_ID = "1p2Voy5pcP6BcsOmGnwYF0_cMbzhVfm2XI1indRn-VlA";
-const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+
+// CORS proxies (ordered by reliability)
+const CORS_PROXIES = [
+  "https://cors.sh/",  // Primary - most reliable
+  "https://api.allorigins.win/raw?url=",  // Fallback 1
+  "https://thingproxy.freeboard.io/fetch/",  // Fallback 2
+];
+
 const CSV_URL_RAW = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/query?tqx=out:csv&sheet=${encodeURIComponent("52 EP PAP Dashboard")}&_=${Date.now()}`;
-const CSV_URL = CORS_PROXY + encodeURIComponent(CSV_URL_RAW);
+
+// Function to build CSV URL with appropriate proxy
+function buildCSVURL(proxyIndex = 0) {
+  if (proxyIndex >= CORS_PROXIES.length) return null;
+  
+  const proxy = CORS_PROXIES[proxyIndex];
+  if (proxy.includes("?url=")) {
+    // For allorigins format
+    return proxy + encodeURIComponent(CSV_URL_RAW);
+  } else {
+    // For cors.sh and similar
+    return proxy + CSV_URL_RAW;
+  }
+}
+
+let currentProxyIndex = 0;
+let CSV_URL = buildCSVURL(currentProxyIndex);
 
 const LABEL_TO_KEY = {
   "Terverifikasi": "verified",
@@ -1063,31 +1086,50 @@ function csvToData(text) {
 }
 
 // ===== FETCH & RENDER =====
-async function fetchLiveData() {
+async function fetchLiveData(proxyIndex = 0) {
   const dot = document.getElementById("syncDot");
   const status = document.getElementById("syncStatus");
   const btn = document.getElementById("refreshBtn");
   btn.disabled = true;
-  status.textContent = "Memuat data terbaru dari Google Sheets…";
-  dot.className = "sync-dot";
+  
+  if (proxyIndex === 0) {
+    status.textContent = "Memuat data terbaru dari Google Sheets…";
+    dot.className = "sync-dot";
+  }
   
   try {
-    const res = await fetch(CSV_URL, { cache: "no-store" });
+    const url = buildCSVURL(proxyIndex);
+    if (!url) throw new Error("Semua CORS proxy gagal");
+    
+    const res = await fetch(url, { cache: "no-store", timeout: 10000 });
     if (!res.ok) throw new Error("HTTP " + res.status);
+    
     const text = await res.text();
     const data = csvToData(text);
-    if (!data.length) throw new Error("Sheet kosong");
+    if (!data.length) throw new Error("Sheet kosong atau format tidak sesuai");
+    
     renderAll(data);
     dot.className = "sync-dot live";
     const now = new Date().toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
-    status.textContent = `Data langsung dari Google Sheets · diambil pukul ${now}`;
+    status.textContent = `✅ Data live dari Google Sheets · diambil pukul ${now}`;
+    currentProxyIndex = proxyIndex; // Save working proxy
   } catch (err) {
+    console.error(`Proxy ${proxyIndex} error:`, err.message);
+    
+    // Try next proxy
+    if (proxyIndex < CORS_PROXIES.length - 1) {
+      status.textContent = `Mencoba proxy alternatif (${proxyIndex + 1}/${CORS_PROXIES.length})…`;
+      return fetchLiveData(proxyIndex + 1);
+    }
+    
+    // All proxies failed, use fallback
     renderAll(FALLBACK_DATA);
     dot.className = "sync-dot offline";
-    status.textContent = "Tidak bisa memuat Google Sheets — menampilkan data cadangan. Klik 'Segarkan' lagi.";
-    console.error("Fetch error:", err);
+    status.textContent = "⚠️ Tidak bisa memuat Google Sheets (semua proxy gagal) — menampilkan data cadangan. Periksa koneksi internet atau refresh dalam 1 menit.";
   } finally {
-    btn.disabled = false;
+    if (proxyIndex === 0 || proxyIndex >= CORS_PROXIES.length - 1) {
+      btn.disabled = false;
+    }
   }
 }
 
