@@ -604,6 +604,13 @@ const links = [
     description: "Folder dokumen akreditasi PAP RSUD Saras Adyatma."
   },
   {
+    label: "Dashboard PAP 2027",
+    category: "RSUD",
+    section: "Akreditasi",
+    url: "https://nkhafidz.github.io/PAP-2027-DASHBOARD-UNIFIED.html",
+    description: "Real-time tracking kesiapan akreditasi PAP 2027. Menggabungkan planning strategy, timeline, risk register, dan monitoring status implementasi dari Google Sheets."
+  },
+  {
     label: "Regulasi RSUD",
     category: "RSUD",
     section: "Akreditasi",
