@@ -1027,6 +1027,47 @@
       </div>
     </div>
 
+    <style>
+      .prio-card { background:#20303f; color:#e8eef2; border-radius:8px; padding:24px 28px; margin-top:28px; }
+      .prio-card h3 { margin:0 0 6px; font-size:19px; font-weight:700; letter-spacing:-.01em; color:#fff; }
+      .prio-card .prio-sub { color:#9fb0bd; font-size:13px; margin:0 0 8px; }
+      .prio-row { display:grid; grid-template-columns:180px 1fr; gap:22px; padding:16px 0; border-top:1px solid rgba(255,255,255,.09); align-items:start; }
+      .prio-row:first-of-type { border-top:none; }
+      .prio-badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.02em; padding:3px 9px; border-radius:4px; color:#fff; }
+      .prio-count { color:#9fb0bd; font-size:12px; margin-top:7px; }
+      .prio-desc { color:#c4d0da; font-size:13px; line-height:1.6; }
+      .prio-desc strong { color:#eaf1f6; }
+      @media (max-width:640px){ .prio-row{ grid-template-columns:1fr; gap:8px; } }
+    </style>
+    <div class="prio-card">
+      <h3>Skala Prioritas Penyusunan Dokumen</h3>
+      <p class="prio-sub">Urutan pengerjaan regulasi, SPO, dan formulir PAP berdasarkan kolom Prioritas pada Register Regulasi (total 39 dokumen).</p>
+
+      <div class="prio-row">
+        <div>
+          <span class="prio-badge" style="background:#c0392b;">🔴 SANGAT TINGGI</span>
+          <div class="prio-count">26 dokumen — kerjakan lebih dulu</div>
+        </div>
+        <div class="prio-desc">Regulasi &amp; SPO inti yang menyentuh <strong>keselamatan pasien langsung</strong>: Pedoman PAP dan dokumentasi RME/CPPT (PAP 1–1.2), pasien risiko tinggi (PAP 2), risiko bunuh diri/melukai diri (PAP 2.4), EWS (PAP 2.5), resusitasi/Code Blue (PAP 2.6), pelayanan darah (PAP 2.7), pengelolaan nyeri (PAP 4), akhir kehidupan (PAP 5), serta Monev/Audit Rekam Medis.</div>
+      </div>
+
+      <div class="prio-row">
+        <div>
+          <span class="prio-badge" style="background:#cf8324;">🟠 TINGGI</span>
+          <div class="prio-count">12 dokumen</div>
+        </div>
+        <div class="prio-desc">SK Penanggung Jawab PAP, PPK/Clinical Pathway (PAP 2), pelayanan geriatri (PAP 2.1), pelayanan jiwa (PAP 2.3), makanan &amp; terapi gizi (PAP 3), edukasi pengelolaan nyeri (PAP 4), dan kerja sama rohaniawan (PAP 5).</div>
+      </div>
+
+      <div class="prio-row">
+        <div>
+          <span class="prio-badge" style="background:#b8912a;">🟡 SEDANG</span>
+          <div class="prio-count">1 dokumen</div>
+        </div>
+        <div class="prio-desc">Program PKRS pelayanan kesehatan warga lanjut usia berbasis rumah sakit (PAP 2.2).</div>
+      </div>
+    </div>
+
   </div>
 
 </main>
