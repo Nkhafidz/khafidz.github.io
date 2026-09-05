@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard PAP 2027 — RSUD Saras Adyatma</title>
+  <title>Papan Status Persiapan Akreditasi PAP — RSUD Saras Adyatma</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
@@ -670,336 +670,9 @@
   </div>
 </header>
 
-<nav>
-  <ul>
-    <li><button class="tab-btn active" onclick="switchTab(event, 'overview')">📋 Overview</button></li>
-    <li><button class="tab-btn" onclick="switchTab(event, 'reuse')">♻️ Reuse Analysis</button></li>
-    <li><button class="tab-btn" onclick="switchTab(event, 'timeline')">📅 Timeline</button></li>
-    <li><button class="tab-btn" onclick="switchTab(event, 'risks')">⚠️ Risks</button></li>
-    <li><button class="tab-btn" onclick="switchTab(event, 'realtime')">📊 Real-time Status</button></li>
-  </ul>
-</nav>
 
 <main>
-
-  <!-- TAB 1: OVERVIEW -->
-  <div id="overview" class="tab-content active">
-    
-    <div class="section">
-      <span class="section-label">Strategi Leverage Dokumen 2023</span>
-      <div class="pap-grid">
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 1 (Asuhan Seragam)</div>
-          <div class="pap-desc">2 EP base layer untuk seluruh asuhan</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% reuse ready</div>
-        </div>
-
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 1.1 (Asuhan Terintegrasi)</div>
-          <div class="pap-desc">5 EP integrasi multidisiplin CPPT</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% tersedia</div>
-        </div>
-
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 1.2 (Rencana Asuhan 24h)</div>
-          <div class="pap-desc">5 EP rencana & evaluasi asuhan</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% tersedia</div>
-        </div>
-
-        <div class="pap-card reuse-med">
-          <div class="pap-name">PAP 2 (Risiko Tinggi)</div>
-          <div class="pap-desc">3 EP + 7 sub-kategori risiko</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 70%;"></div></div>
-          <div class="pap-percent">⚠️ 70% perlu adaptasi</div>
-        </div>
-
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 2.1-2.2 (Geriatri)</div>
-          <div class="pap-desc">8 EP pelayanan lansia + PKRS</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% verified 2023</div>
-        </div>
-
-        <div class="pap-card reuse-med">
-          <div class="pap-name">PAP 2.3 (Pelayanan Jiwa)</div>
-          <div class="pap-desc">3 EP TDD ODGJ (new 2024)</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
-          <div class="pap-percent">🔶 50% konsep ada</div>
-        </div>
-
-        <div class="pap-card reuse-low">
-          <div class="pap-name">PAP 2.4-2.6 (Bunuh Diri, EWS, Code Blue)</div>
-          <div class="pap-desc">13 EP new standards 2024</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 30%;"></div></div>
-          <div class="pap-percent">🔴 30% GAP BESAR</div>
-        </div>
-
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 2.7 (Pelayanan Darah)</div>
-          <div class="pap-desc">3 EP rujukan PMI, transfusi</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% established</div>
-        </div>
-
-        <div class="pap-card reuse-med">
-          <div class="pap-name">PAP 3 (Gizi & Nutrisi)</div>
-          <div class="pap-desc">5 EP pengkajian, terapi, monitoring</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div>
-          <div class="pap-percent">🟢 80% framework ready</div>
-        </div>
-
-        <div class="pap-card reuse-med">
-          <div class="pap-name">PAP 4 (Manajemen Nyeri)</div>
-          <div class="pap-desc">4 EP skala nyeri, edukasi, monitoring</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
-          <div class="pap-percent">⚠️ 75% perlu penyegaran</div>
-        </div>
-
-        <div class="pap-card reuse-high">
-          <div class="pap-name">PAP 5 (Akhir Kehidupan)</div>
-          <div class="pap-desc">2 EP asuhan terminal, dukungan spiritual</div>
-          <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
-          <div class="pap-percent">✅ 100% ada 2022</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <span class="section-label">Quick Stats</span>
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-title">Dokumen Siap Reuse</div>
-          <div class="card-meta">Dari audit 2023</div>
-          <div class="card-value">32 EP</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary);">PAP 1, 1.1, 1.2, Geriatri, Darah, Akhir Hayat</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Perlu Adaptasi</div>
-          <div class="card-meta">Minor updates</div>
-          <div class="card-value">14 EP</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary);">Risiko Tinggi, Gizi, Nyeri</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">GAP Besar (NEW)</div>
-          <div class="card-meta">Build from scratch</div>
-          <div class="card-value">6 EP</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary);">Bunuh Diri (6 EP) + EWS (2) belum ada</div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Estimasi Effort</div>
-          <div class="card-meta">Per minggu</div>
-          <div class="card-value">8-10 EP</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary);">Timeline 13 minggu feasible</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- TAB 2: REUSE ANALYSIS (dari pap-2027-dashboard) -->
-  <div id="reuse" class="tab-content">
-    
-    <div class="section">
-      <span class="section-label">Analisis Leverage Dokumen per PAP Area</span>
-      <div class="infobox">
-        <div class="infobox-title">Folder 2023 & Reusability Matrix</div>
-        <div class="infobox-content">
-          Audit arsip 2023-1 (kmkp.rssa@gmail.com): PAP 1 & 1.1 & 1.2 sudah sangat lengkap dengan sub-bukti detail.
-          PAP 2-5 status belum sepenuhnya terverifikasi via API (akses terbatas).
-          <br><br>
-          <strong>Strategi:</strong> Konsilidasikan 2023 → folder 2027, kelompokkan by reusability level (High/Med/Low/New).
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <span class="section-label">Reusability Level Breakdown</span>
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-title">HIGH (90-100%)</div>
-          <div class="card-value" style="color: var(--color-success-light);">32 EP</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 12px;">
-            ✅ PAP 1, 1.1, 1.2<br>
-            ✅ PAP 2.1, 2.2 (Geriatri)<br>
-            ✅ PAP 2.7 (Darah)<br>
-            ✅ PAP 5 (Akhir Hayat)<br>
-            📋 Copy + minimal update
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">MEDIUM (50-80%)</div>
-          <div class="card-value" style="color: var(--color-warning-light);">14 EP</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 12px;">
-            ⚠️ PAP 2 (adaptasi risiko)<br>
-            ⚠️ PAP 2.3 (TDD jiwa)<br>
-            ⚠️ PAP 3 (Gizi)<br>
-            ⚠️ PAP 4 (Nyeri)<br>
-            📋 Revisi + strukturisasi
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">LOW (0-30%)</div>
-          <div class="card-value" style="color: var(--color-danger-bright);">6 EP</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 12px;">
-            🔴 PAP 2.4 (Bunuh Diri) — 6 EP<br>
-            🔴 PAP 2.5 (EWS) — 2 EP<br>
-            📋 Buat dari nol (best practice)
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- TAB 3: TIMELINE -->
-  <div id="timeline" class="tab-content">
-    
-    <div class="section">
-      <span class="section-label">Estimasi Rencana 13 Minggu (Januari → September 2027)</span>
-      <div class="infobox">
-        <div class="infobox-title">Fase Persiapan</div>
-        <div class="infobox-content">
-          <strong>Week 1-3:</strong> Audit dokumen 2023 + setup tracker + assignment PIC<br>
-          <strong>Week 4-6:</strong> PAP 1-1.2, PAP 2.1-2.2 finalisasi<br>
-          <strong>Week 7-9:</strong> PAP 2.3-2.7, PAP 3-5 draft selesai<br>
-          <strong>Week 10-13:</strong> Tindak lanjut gap + mock survey + finalisasi
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <span class="section-label">Milestone Kunci</span>
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-title">Week 1-2</div>
-          <div class="card-meta">Kickoff Phase</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary); line-height: 1.6;">
-            ✓ Audit folder 2023<br>
-            ✓ PIC assignment<br>
-            ✓ Tracker setup
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Week 4</div>
-          <div class="card-meta">PAP 1-1.2 Complete</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary); line-height: 1.6;">
-            ✓ 13 EP finalized<br>
-            ✓ Training prep<br>
-            ✓ Evidence mapped
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Week 6</div>
-          <div class="card-meta">PAP 2.4-2.6 Final</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary); line-height: 1.6;">
-            ✓ Bunuh Diri<br>
-            ✓ EWS complete<br>
-            ✓ Code Blue
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Week 12</div>
-          <div class="card-meta">Mock Survey</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary); line-height: 1.6;">
-            ✓ Find gaps<br>
-            ✓ RTL close<br>
-            ✓ Evidence ready
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- TAB 4: RISKS -->
-  <div id="risks" class="tab-content">
-    
-    <div class="section">
-      <span class="section-label">Risk Register & Mitigation</span>
-      <div class="card-grid">
-        <div class="card" style="border-top: 3px solid var(--color-danger-bright);">
-          <div class="card-title">🔴 Regulasi 2023 vs 2024</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            SPO 2023 berbasis Kemkes 1128 → adaptasi Kepdirjen 47104<br><br>
-            <strong>Mitigasi:</strong> Review Komite Medik minggu 1
-          </div>
-        </div>
-
-        <div class="card" style="border-top: 3px solid var(--color-danger-bright);">
-          <div class="card-title">🔴 PAP 2.4-2.6 Belum Ada</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            Bunuh Diri, EWS, Code Blue = new 2024<br><br>
-            <strong>Mitigasi:</strong> Start minggu 2, assign best PIC
-          </div>
-        </div>
-
-        <div class="card" style="border-top: 3px solid var(--color-danger);">
-          <div class="card-title">🟠 Tim Terbagi 3 Lokasi</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            RSUD, RS SGH, Klinik → sinkronisasi sulit<br><br>
-            <strong>Mitigasi:</strong> Weekly call + Telegram reminder
-          </div>
-        </div>
-
-        <div class="card" style="border-top: 3px solid var(--color-danger);">
-          <div class="card-title">🟠 RME Data Fragmented</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            Folder 2023 PAP 3-5 belum clear<br><br>
-            <strong>Mitigasi:</strong> Week 1 audit mendalam
-          </div>
-        </div>
-
-        <div class="card" style="border-top: 3px solid var(--color-warning-light);">
-          <div class="card-title">🟡 Jadwal Ketat</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            Training & simulasi perlu 2 minggu<br><br>
-            <strong>Mitigasi:</strong> Schedule early, recorded session
-          </div>
-        </div>
-
-        <div class="card" style="border-top: 3px solid var(--color-warning-light);">
-          <div class="card-title">🟡 Dokumen Terlambat</div>
-          <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 12px;">
-            8 dokumen priority dalam 4 minggu<br><br>
-            <strong>Mitigasi:</strong> Template ready week 1, parallel teams
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <span class="section-label">Immediate Actions (This Week)</span>
-      <div style="display: grid; gap: 12px;">
-        <div class="infobox">
-          <div class="infobox-title">🔴 ACTION 1: Clarify PAP 3-5 Folder (TODAY)</div>
-          <div class="infobox-content">Share link folder 2023 PAP 3, 4, 5 → confirm struktur & reusability rate</div>
-        </div>
-        <div class="infobox">
-          <div class="infobox-title">🟠 ACTION 2: Setup Sheets Tracker (TOMORROW)</div>
-          <div class="infobox-content">Copy template ke folder 00_Indeks → assign access ke bidang terkait</div>
-        </div>
-        <div class="infobox">
-          <div class="infobox-title">🟡 ACTION 3: Schedule Kickoff (DAY 3)</div>
-          <div class="infobox-content">Direktur, Komite Medik, 13-15 PIC area → review strategy + assignment</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- TAB 5: REAL-TIME STATUS (dari Google Sheets) -->
-  <div id="realtime" class="tab-content">
+  <div id="realtime">
 
     <div class="section">
       <span class="section-label">Status Real-time dari Google Sheets</span>
@@ -1071,6 +744,18 @@
       .prio-desc { font-size: 14.5px; }
       .prio-count { font-size: 13px; }
       .prio-badge { font-size: 12px; }
+
+      /* ===== Kartu 'Perlu tindakan sekarang' ===== */
+      .action-strip { background:#12282B; color:#fff; border-radius:8px; padding:26px 28px; margin-top:44px; }
+      .action-strip h2 { color:#fff; font-size:21px; margin:0 0 4px; font-family:var(--font-serif); }
+      .action-strip .action-sub { color:#9FB5B2; font-size:14px; margin-bottom:20px; }
+      .action-list { list-style:none; margin:0; padding:0; }
+      .action-list li { display:grid; grid-template-columns:210px 1fr; gap:22px; padding:16px 0; border-top:1px solid rgba(255,255,255,.09); align-items:start; }
+      .action-list li:first-child { border-top:none; }
+      .action-who { font-weight:600; font-size:14px; color:#fff; }
+      .action-what { font-size:14px; color:#C9D8D6; line-height:1.6; }
+      .action-what b { color:#fff; font-weight:600; }
+      @media (max-width:640px){ .action-list li{ grid-template-columns:1fr; gap:6px; } }
     </style>
     <div class="prio-card">
       <h3>Skala Prioritas Penyusunan Dokumen</h3>
@@ -1101,6 +786,29 @@
       </div>
     </div>
 
+    <div class="action-strip">
+      <h2>Perlu tindakan sekarang</h2>
+      <div class="action-sub">Empat hal ini tidak bisa dilanjutkan tanpa keputusan atau informasi dari pihak lain.</div>
+      <ul class="action-list">
+        <li>
+          <div class="action-who">Geriatri &mdash; PAP 2.1 / 2.2</div>
+          <div class="action-what">Menunggu <b>keputusan Direktur</b>: apakah RS menyelenggarakan pelayanan geriatri terstruktur. Nota dinas berisi 3 opsi sudah diajukan.</div>
+        </li>
+        <li>
+          <div class="action-who">Darah &mdash; PAP 2.7</div>
+          <div class="action-what">Menunggu info status <b>kerja sama dengan UDD PMI</b> &mdash; RS tidak memiliki BDRS sendiri, sehingga REG-12/SPO-10 perlu disusun berbasis model rujukan.</div>
+        </li>
+        <li>
+          <div class="action-who">SK PJ PAP &mdash; REG-02</div>
+          <div class="action-what">Diambil alih penyusunannya oleh <b>Manajemen/Direktur</b> &mdash; bukan lagi bagian tugas penyusunan dokumen PAP.</div>
+        </li>
+        <li>
+          <div class="action-who">Gizi &mdash; PAP 3</div>
+          <div class="action-what">Instalasi Gizi merapikan <b>duplikasi penomoran SOP-GIZI</b> (mis. SOP-GIZI-01 dan SOP-GIZI-14 berjudul sama) sesuai penugasan pada REG-13.</div>
+        </li>
+      </ul>
+    </div>
+
   </div>
 
 </main>
@@ -1108,13 +816,13 @@
 <footer>
   <div class="footer-content">
     <div>
-      <strong>Dashboard PAP 2027</strong><br>
-      RSUD Saras Adyatma Bantul • Persiapan Akreditasi JCI 2027<br>
-      <small>Menggabungkan planning strategy + real-time tracking</small>
+      <strong>Papan Status Persiapan Akreditasi PAP</strong><br>
+      RSUD Saras Adyatma • Kabupaten Bantul<br>
+      <small>Perbarui status di sini setiap kali dokumen disahkan atau berubah.</small>
     </div>
     <div style="text-align: right;">
-      Last updated: <span id="update-time">—</span><br>
-      <small><a href="https://docs.google.com/spreadsheets/d/1p2Voy5pcP6BcsOmGnwYF0_cMbzhVfm2XI1indRn-VlA/edit" style="color: var(--color-success); text-decoration: none;">Data source: Google Sheets</a></small>
+      Diperbarui: <span id="update-time">—</span><br>
+      <small><a href="https://docs.google.com/spreadsheets/d/1p2Voy5pcP6BcsOmGnwYF0_cMbzhVfm2XI1indRn-VlA/edit" style="color: var(--teal); text-decoration: none;">Sumber data: Google Sheets (tab Master_EP)</a></small>
     </div>
   </div>
 </footer>
