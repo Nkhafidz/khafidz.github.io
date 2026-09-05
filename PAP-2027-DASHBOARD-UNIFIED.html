@@ -1179,28 +1179,55 @@ function csvToData(text) {
 
 // ===== FETCH via gviz JSONP (menembus CORS tanpa proxy) =====
 const SHEET_NAME = "52 EP PAP Dashboard";
-const GVIZ_BASE = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizResponse&sheet=${encodeURIComponent(SHEET_NAME)}`;
+const GVIZ_ROOT = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGvizResponse`;
+// Coba berurutan: nama tab -> tab pertama (gid=0) -> default
+const GVIZ_VARIANTS = [
+  `&sheet=${encodeURIComponent(SHEET_NAME)}`,
+  `&gid=0`,
+  ``,
+];
 let _gvizTimeout = null;
+let _gvizAttempt = 0;
 
 function fetchLiveData() {
+  _gvizAttempt = 0;
+  tryGvizVariant();
+}
+
+function tryGvizVariant() {
   const dot = document.getElementById("syncDot");
   const status = document.getElementById("syncStatus");
   const btn = document.getElementById("refreshBtn");
   if (btn) btn.disabled = true;
-  status.textContent = "Memuat data dari Google Sheets…";
+  status.textContent = _gvizAttempt === 0
+    ? "Memuat data dari Google Sheets…"
+    : `Mencoba cara alternatif (${_gvizAttempt + 1}/${GVIZ_VARIANTS.length})…`;
   dot.className = "sync-dot";
 
   const old = document.getElementById("gvizScript");
   if (old) old.remove();
 
   if (_gvizTimeout) clearTimeout(_gvizTimeout);
-  _gvizTimeout = setTimeout(() => handleGvizFailure("Timeout — Sheets tidak merespons"), 12000);
+  _gvizTimeout = setTimeout(nextGvizOrFail, 12000);
 
   const script = document.createElement("script");
   script.id = "gvizScript";
-  script.src = GVIZ_BASE + "&_=" + Date.now();
-  script.onerror = () => handleGvizFailure("Gagal memuat script dari Sheets");
+  script.src = GVIZ_ROOT + GVIZ_VARIANTS[_gvizAttempt] + "&_=" + Date.now();
+  script.onerror = nextGvizOrFail;
   document.body.appendChild(script);
+}
+
+// Coba variant berikutnya; kalau habis, baru dianggap gagal
+function nextGvizOrFail() {
+  if (_gvizTimeout) { clearTimeout(_gvizTimeout); _gvizTimeout = null; }
+  const s = document.getElementById("gvizScript");
+  if (s) s.remove();
+  if (_gvizAttempt < GVIZ_VARIANTS.length - 1) {
+    _gvizAttempt++;
+    tryGvizVariant();
+  } else {
+    handleGvizFailure("Semua cara gagal — cek izin berbagi Sheets & nama tab");
+  }
 }
 
 // Google memanggil fungsi ini dengan data-nya
@@ -1260,14 +1287,13 @@ function handleGvizResponse(resp) {
     const now = new Date().toLocaleTimeString("id-ID", { hour:"2-digit", minute:"2-digit" });
     status.innerHTML = `✅ <strong>Live dari Google Sheets</strong> · ${now} `;
     appendEditButton(status);
+    if (btn) btn.disabled = false;
 
     if (!autoRefreshInterval) autoRefreshInterval = setInterval(fetchLiveData, 60000);
   } catch (err) {
-    handleGvizFailure(err.message);
-  } finally {
-    if (btn) btn.disabled = false;
-    const s = document.getElementById("gvizScript");
-    if (s) s.remove();
+    // Variant ini gagal → coba variant berikutnya sebelum menyerah
+    console.warn("Variant gagal:", err.message);
+    nextGvizOrFail();
   }
 }
 
@@ -1294,7 +1320,7 @@ function handleGvizFailure(msg) {
   renderAll(FALLBACK_DATA);
   dot.className = "sync-dot offline";
   dataMode = "manual";
-  status.innerHTML = `⚠️ <strong>Belum tersambung ke Sheets</strong> `;
+  status.innerHTML = `⚠️ <strong>Belum tersambung ke Sheets.</strong> Pastikan izin berbagi Sheets = "Siapa saja yang punya link (Pelihat)". Atau gunakan Edit Manual. `;
   appendEditButton(status);
 }
 
