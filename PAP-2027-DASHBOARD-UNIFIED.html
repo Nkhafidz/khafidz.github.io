@@ -1441,10 +1441,12 @@ function renderAll(DATA) {
     detail.className = "std-detail";
     detail.innerHTML = eps.map(([letter, doc, status, note]) => `
       <div class="ep-item">
-        <div class="ep-letter">(${letter})</div>
-        <div>
-          <div class="ep-doc">${doc}</div>
-          ${note ? `<div class="ep-note">${note}</div>` : ""}
+        <div class="ep-content">
+          <div class="ep-letter">(${letter})</div>
+          <div>
+            <div class="ep-doc">${doc}</div>
+            ${note ? `<div class="ep-note">${note}</div>` : ""}
+          </div>
         </div>
         <span class="pill ${STATUS[status].cls}"><span class="dot"></span>${STATUS[status].label}</span>
       </div>
